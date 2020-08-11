@@ -55,14 +55,50 @@
 
 ![](Example_Launcher_04.png)
 
-* If necessary, Make distributed surface group files (`*.sur`) by text editor
+* Make distributed surface group files (`*.sur`) by text editor
+
+  - [L1_MASTER.sur](L1_MASTER.sur)
+  - [L2_SLAVE.sur](L2_SLAVE.sur)
+  - [L2_MASTER.sur](L2_MASTER.sur)
+  - [L3_SLAVE.sur](L3_SLAVE.sur)
 
 ### 4. Edit python script
 
 * Ref files :  [robot.py (Modified python script after Dumped)](robot.py), 
-* Edit `robor.py` for `eigen.jl` carefully
+* Edit `robot.py` for `eigen.jl` carefully
 
-### 5. Run
+```python
+## Key Points
+
+...
+# Path setting
+sys.path.insert(0, r'./')
+...
+# Import STEP File
+robot = geompy.ImportSTEP("../robot.stp", False, True)
+...
+# Rotate by parameters
+robot_1.RotateObject( L2_1, SMESH.AxisStruct( J2X, 0, J2Z, 0, 1, 0 ), J2_ANGLE, 0 )
+robot_1.RotateObject( L3_1, SMESH.AxisStruct( J2X, 0, J2Z, 0, 1, 0 ), J2_ANGLE, 0 )
+robot_1.RotateObject( L3_1, SMESH.AxisStruct( J3X, 0, J3Z, 0, 1, 0 ), J3_ANGLE, 0 )
+...
+# Export UNV File
+  robot_1.ExportUNV( r'robot.unv' )
+...
+# Kill Salome
+# https://www.salome-platform.org/forum/forum_10/645560298#457218771
+import os
+from killSalomeWithPort import killMyPort
+killMyPort(os.getenv('NSPORT'))
+```
+
+### 5. Scripts
+
+* [robot.sh](robot.sh) : FEA
+* [eigen.jl](eigen.jl) : IK
+* [EigenData_Plot.jl](EigenData_Plot.jl) : Plot
+
+### 6. Run
 
 * In this example, when calculating using an old-fashioned notebook PC (CPU Intel old dual core 1.5GHz, RAM 4MB), 1,357 cases were generated and the calculation took about a day to complete.
 
@@ -71,8 +107,9 @@ julia eigen.jl
 julia EigenData_Plot.jl
 ```
 
-### 6. Result
+### 7. Result
 
+* Pose by IK is not yet perfect.
 * Eigenfrequency Maps of Mode 1~4 on 1st quadrant space
 
 ![](EigenFrequencies_1.png)
