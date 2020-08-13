@@ -10,15 +10,18 @@ a1 = 0.15;
 a2 = 0.30;
 a3 = 0.25;
 cell = 0.05;
-pose = 59;
-PicSize = 8;
+pose = 50;
+PicSize = 40;
 
 # FK
 J2 = [0.00 a1;];
 J3 = zeros(size(EigenData)[1],2);
+J5 = J3;
 for i=1:size(EigenData)[1]
-	J3[i,1] = J2[1]+a2*cos(ANGLE[i,1]);
-	J3[i,2] = J2[2]+a2*sin(ANGLE[i,1]);
+	J3[i,1] = J2[1]+a2*cos(ANGLE[i,1]-deg2rad(90));
+	J3[i,2] = J2[2]+a2*sin(ANGLE[i,1]-deg2rad(90));
+	J5[i,1] = J3[1]+a3*cos(ANGLE[i,1]+ANGLE[i,2]);
+	J5[i,2] = J3[2]+a3*sin(ANGLE[i,1]+ANGLE[i,2]);
 end
 
 # Plot
@@ -39,7 +42,8 @@ for j=1:4
 		EigenFreq = EigenData[i,j+2];
 		annotate("$i\n$EigenFreq", xy=(EigenData[i,1],EigenData[i,2]),ha="center",va="center",color="white",fontsize="x-small");
 	end
-	plot( [J2[1], J3[pose,1], EigenData[pose,1]], [J2[2], J3[pose,2], EigenData[pose,2]],color="red",linestyle="--",linewidth=2,marker="o");
+	plot( [J2[1], J3[pose,1], J5[pose,1]], [J2[2], J3[pose,2], J5[pose,2]],color="orange",linestyle="--",linewidth=2,marker="o");
+	scatter(EigenData[pose,1],EigenData[pose,2],color="red");
 	savefig("EigenFrequencies_$j.png")
 end
 

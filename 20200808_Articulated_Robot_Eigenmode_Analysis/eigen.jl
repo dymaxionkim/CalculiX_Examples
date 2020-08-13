@@ -10,7 +10,7 @@
 a1 = 0.15;
 a2 = 0.30;
 a3 = 0.25;
-cell = 0.015;
+cell = 0.05;
 
 # Domain
 J2 = [0.00 a1;];
@@ -48,8 +48,8 @@ for i=1:size(J5)[1]
     ANGLE[i,1] = gamma - beta;
 	ANGLE[i,2] = acos(cos_theta3);
 	# FK
-    J3[i,1] = J2[1]+a2*sin(ANGLE[i,1]-pi/2);
-    J3[i,2] = J2[2]+a2*cos(ANGLE[i,1]-pi/2);
+    J3[i,1] = J2[1]+a2*sin(ANGLE[i,1]-deg2rad(90));
+    J3[i,2] = J2[2]+a2*cos(ANGLE[i,1]-deg2rad(90));
     # FEM
     POSTURE = i;
     ANGLE2 = ANGLE[i,1]-pi/2;
@@ -89,6 +89,7 @@ end
 # Save
 using CSV, DataFrames
 CSV.write("EigenData.csv",  DataFrame(EigenData), writeheader=false);
+CSV.write("ANGLE.csv",  DataFrame(ANGLE), writeheader=false);
 
 print("*************************************************\n");
 print("*                  Finished                     *\n");
